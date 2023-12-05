@@ -1,3 +1,3 @@
 # 8-Week-SQL-Challenge
 
-## In the project
+### This repository will show my solutions and thought processes when solving problems from the [8 Week SQL Challenge](https://8weeksqlchallenge.com/) created by Danat With Danny.
