@@ -1,4 +1,4 @@
-# 8-Week-SQL-Challenge
+# SQL-Challenge
 
 This repository will display my solutions and thought processes when solving the 8 case studies from the [8 Week SQL Challenge](https://8weeksqlchallenge.com/).
 
