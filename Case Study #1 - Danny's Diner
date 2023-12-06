@@ -1,0 +1,195 @@
+**Schema (PostgreSQL v13)**
+
+    CREATE SCHEMA dannys_diner;
+    SET search_path = dannys_diner;
+    
+    CREATE TABLE sales (
+      "customer_id" VARCHAR(1),
+      "order_date" DATE,
+      "product_id" INTEGER
+    );
+    
+    INSERT INTO sales
+      ("customer_id", "order_date", "product_id")
+    VALUES
+      ('A', '2021-01-01', '1'),
+      ('A', '2021-01-01', '2'),
+      ('A', '2021-01-07', '2'),
+      ('A', '2021-01-10', '3'),
+      ('A', '2021-01-11', '3'),
+      ('A', '2021-01-11', '3'),
+      ('B', '2021-01-01', '2'),
+      ('B', '2021-01-02', '2'),
+      ('B', '2021-01-04', '1'),
+      ('B', '2021-01-11', '1'),
+      ('B', '2021-01-16', '3'),
+      ('B', '2021-02-01', '3'),
+      ('C', '2021-01-01', '3'),
+      ('C', '2021-01-01', '3'),
+      ('C', '2021-01-07', '3');
+     
+    
+    CREATE TABLE menu (
+      "product_id" INTEGER,
+      "product_name" VARCHAR(5),
+      "price" INTEGER
+    );
+    
+    INSERT INTO menu
+      ("product_id", "product_name", "price")
+    VALUES
+      ('1', 'sushi', '10'),
+      ('2', 'curry', '15'),
+      ('3', 'ramen', '12');
+      
+    
+    CREATE TABLE members (
+      "customer_id" VARCHAR(1),
+      "join_date" DATE
+    );
+    
+    INSERT INTO members
+      ("customer_id", "join_date")
+    VALUES
+      ('A', '2021-01-07'),
+      ('B', '2021-01-09');
+     
+
+---
+
+**Query #1**
+
+    select 
+    	sales.customer_id customer, 
+        sum(menu.price) money_spent
+    from dannys_diner.sales
+    	join dannys_diner.menu 
+        on sales.product_id = menu.product_id
+    group by sales.customer_id
+    order by sales.customer_id;
+
+| customer | money_spent |
+| -------- | ----------- |
+| A        | 76          |
+| B        | 74          |
+| C        | 36          |
+
+---
+**Query #2**
+
+    select 
+    	customer_id customer, 
+        count(distinct order_date) day_count
+    from dannys_diner.sales
+    group by customer_id;
+
+| customer | day_count |
+| -------- | --------- |
+| A        | 4         |
+| B        | 6         |
+| C        | 2         |
+
+---
+**Query #3**
+
+    with sales_rank as (
+      select 
+        sales.customer_id, 
+        sales.order_date, 
+        menu.product_name,
+        dense_rank() over (
+          partition by sales.customer_id 
+          order by sales.order_date) as rank
+      from dannys_diner.sales
+      join dannys_diner.menu
+        on sales.product_id = menu.product_id
+    )
+    
+    select 
+      customer_id customer, 
+      product_name product
+    from sales_rank
+    where rank = 1
+    group by customer_id, product_name;
+
+| customer | product |
+| -------- | ------- |
+| A        | curry   |
+| A        | sushi   |
+| B        | curry   |
+| C        | ramen   |
+
+---
+**Query #4**
+
+    select
+    	menu.product_name product,
+        count(sales.product_id) count
+    from dannys_diner.sales
+    	join dannys_diner.menu
+        on sales.product_id = menu.product_id
+    group by menu.product_name
+    limit 1;
+
+| product | count |
+| ------- | ----- |
+| ramen   | 8     |
+
+---
+**Query #5**
+
+    select
+     	sales.customer_id customer,
+        menu.product_name product,
+        count(*) as purchased
+    from dannys_diner.sales
+    	join dannys_diner.menu
+        on sales.product_id = menu.product_id
+    group by sales.customer_id, menu.product_name
+    order by sales.customer_id, purchased desc;
+
+| customer | product | purchased |
+| -------- | ------- | --------- |
+| A        | ramen   | 3         |
+| A        | curry   | 2         |
+| A        | sushi   | 1         |
+| B        | ramen   | 2         |
+| B        | curry   | 2         |
+| B        | sushi   | 2         |
+| C        | ramen   | 3         |
+
+---
+**Query #6**
+
+    with pop_menu as (
+      select 
+      	sales.customer_id,
+      	menu.product_name,
+      	count(sales.product_id) as purchased,
+      	dense_rank() over (
+          partition by sales.customer_id
+          order by count(sales.customer_id) desc) as rank
+       from dannys_diner.sales
+       		join dannys_diner.menu
+       		on sales.product_id = menu.product_id
+       group by sales.customer_id, menu.product_name
+    )
+    
+    select 
+    	customer_id customer,
+        product_name product,
+        purchased
+    from pop_menu 
+    	where rank = 1;
+
+| customer | product | purchased |
+| -------- | ------- | --------- |
+| A        | ramen   | 3         |
+| B        | ramen   | 2         |
+| B        | curry   | 2         |
+| B        | sushi   | 2         |
+| C        | ramen   | 3         |
+
+---
+
+[View on DB Fiddle](https://www.db-fiddle.com/f/2rM8RAnq7h5LLDTzZiRWcd/138)
