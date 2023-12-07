@@ -192,4 +192,48 @@
 
 ---
 
-[View on DB Fiddle](https://www.db-fiddle.com/f/2rM8RAnq7h5LLDTzZiRWcd/138)
+6
+
+with mem_items as(
+  select
+  	sales.customer_id,
+  	sales.product_id,
+  	row_number() over 
+  		(partition by members.customer_id
+         order by sales.order_date) as date_row
+  	from dannys_diner.sales
+  	join dannys_diner.members
+  		on sales.customer_id = members.customer_id
+  	where sales.order_date > members.join_date
+ )
+ 
+ select
+ 	mem_items.customer_id customer,
+    menu.product_name product
+ from mem_items
+ 	join dannys_diner.menu
+    on mem_items.product_id = menu.product_id
+ where date_row = 1;
+
+-- 7. Which item was purchased just before the customer became a member?
+
+with prior_mem_items as(
+  select
+  	sales.customer_id,
+  	sales.product_id,
+  	row_number() over 
+  		(partition by members.customer_id
+         order by sales.order_date desc) as date_row
+  	from dannys_diner.sales
+  	join dannys_diner.members
+  		on sales.customer_id = members.customer_id
+  	where sales.order_date < members.join_date
+ )
+ 
+ select 
+ 	prior_mem_items.customer_id customer,
+    menu.product_name product
+ from prior_mem_items
+ 	join dannys_diner.menu
+    on prior_mem_items.product_id = menu.product_id
+ where date_row = 1;
