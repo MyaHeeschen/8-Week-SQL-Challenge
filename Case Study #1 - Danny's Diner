@@ -213,7 +213,8 @@ with mem_items as(
  from mem_items
  	join dannys_diner.menu
     on mem_items.product_id = menu.product_id
- where date_row = 1;
+ where date_row = 1
+order by customer;
 
 -- 7. Which item was purchased just before the customer became a member?
 
@@ -236,4 +237,5 @@ with prior_mem_items as(
  from prior_mem_items
  	join dannys_diner.menu
     on prior_mem_items.product_id = menu.product_id
- where date_row = 1;
+ where date_row = 1
+order by customer;
