@@ -1,5 +1,5 @@
-<h1>Danny's Diner</h1>
+<h1 align=center>Danny's Diner</h1>
 
-![image](https://github.com/MyaHeeschen/8-Week-SQL-Challenge/assets/135869732/189d47d5-b9a0-4693-af69-dc4d8a82889e)
-
-
+<p align = center>
+<img src="https://user-images.githubusercontent.com/81607668/127727503-9d9e7a25-93cb-4f95-8bd0-20b87cb4b459.png" alt="Image" width="500" height="520">
+</p>
