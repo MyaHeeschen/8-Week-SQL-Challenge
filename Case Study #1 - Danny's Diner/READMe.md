@@ -15,7 +15,13 @@ Danny has given us three datasets to explore:
 - members
 
 ## Entity Relationship Diagram
-![image](https://github.com/MyaHeeschen/8-Week-SQL-Challenge/assets/135869732/b79f604c-8ec8-459b-a6e4-9ba6568173a3)
+<p align = center>
+<a href="url"><img src="https://github.com/MyaHeeschen/8-Week-SQL-Challenge/assets/135869732/2baf6e93-eea5-44d8-b5c4-c96ab5a7211a" align="center" height="350" width="500" ></a>
+</p>
 
 ## Datasets
 All of the datasets are in the dannys_diner database schema.
+
+<h3><ins>Table 1: sales</ins></h3>
+
+This table contains the customer_id, order_date, and product_id for all purchases so far.
