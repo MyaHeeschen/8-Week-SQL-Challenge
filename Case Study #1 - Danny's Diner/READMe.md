@@ -89,7 +89,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
               partition by sales.customer_id 
               order by sales.order_date) as rank
           from dannys_diner.sales
-          join dannys_diner.menu on sales.product_id = menu.product_id
+             join dannys_diner.menu on sales.product_id = menu.product_id
         )
         
         select 
@@ -165,13 +165,78 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
    ```
 7. Which item was purchased just before the customer became a member?
    ```sql
+   with prior_mem_items as(
+      select
+      	sales.customer_id,
+      	sales.product_id,
+      	row_number() over 
+      		(partition by members.customer_id
+      order by sales.order_date desc) as date_row
+      from dannys_diner.sales
+         join dannys_diner.members on sales.customer_id = members.customer_id
+      where sales.order_date < members.join_date
+     )
+     
+     select 
+        prior_mem_items.customer_id customer,
+        menu.product_name product
+     from prior_mem_items
+        join dannys_diner.menu on prior_mem_items.product_id = menu.product_id
+     where date_row = 1
+     order by customer;
    ```
 8. What are the total items and amount spent for each member before they became a member?
    ```sql
+      select
+         sales.customer_id customer,
+         count(sales.customer_id) total_items,
+         sum(menu.price) amount_spent
+      from dannys_diner.sales
+         join dannys_diner.menu on sales.product_id = menu.product_id
+         join dannys_diner.members on sales.customer_id = members.customer_id
+      where sales.order_date < members.join_date
+      group by sales.customer_id
+      order by sales.customer_id;
    ```
 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
    ```sql
+      select
+         sales.customer_id customer,
+         sum(case 
+               when menu.product_name = 'sushi'
+                  then menu.price * 20
+               else menu.price * 10
+               end) points
+      from dannys_diner.sales
+         join dannys_diner.menu on sales.product_id = menu.product_id
+      group by sales.customer_id
+      order by sales.customer_id;
    ```
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
    ```sql
+   with offer_dates as (
+      select 
+         sales.customer_id customer,
+         sales.order_date,
+         menu.product_name,
+         menu.price,
+         members.join_date,
+         (join_date + interval '6 day') offer_end
+      from dannys_diner.sales
+         join dannys_diner.menu on sales.product_id = menu.product_id
+         join dannys_diner.members on sales.customer_id = members.customer_id
+    )
+    
+      select
+         customer,
+         sum(case 
+               when order_date between join_date and offer_end
+                  then price * 20
+               when product_name = 'sushi'
+                  then price * 20
+               else price * 10
+               end) jan_member_points
+      from offer_dates
+      where order_date < '2021-02-01'
+      group by customer;
    ```
