@@ -15,3 +15,7 @@ Danny has given us three datasets to explore:
 - members
 
 ## Entity Relationship Diagram
+![image](https://github.com/MyaHeeschen/8-Week-SQL-Challenge/assets/135869732/b79f604c-8ec8-459b-a6e4-9ba6568173a3)
+
+## Datasets
+All of the datasets are in the dannys_diner database schema.
