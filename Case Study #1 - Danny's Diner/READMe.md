@@ -10,9 +10,9 @@ _All information, datasets, and images came from [Data With Danny](https://8week
 Danny's Diner is a small restaurant that sells three of Danny's favorite foods: sushi, curry, and ramen. Danny needs help to make sure he stays in business. Using the basic data from the first couple of months Danny's Diner has been in business, we will analyze the different customer trends to help deliver a better and more personalized experience.
 
 Danny has given us three datasets to explore:
-- sales
-- menu
-- members
+- `sales`
+- `menu`
+- `members`
 
 ## Entity Relationship Diagram
 <p align = center>
@@ -43,4 +43,135 @@ This table contains the `customer_id`, `order_date`, and `product_id` for all pu
 |C|2021-01-01|3|
 |C|2021-01-07|3|
 
-``
+<h3><ins>Table 2: menu</ins></h3>
+
+This table contains the `product_id`, `product_name`, and `price` for each menu item.
+|product_id|product_name|price|
+|---|---|---|
+|1|sushi|10|
+|2|curry|15|
+|3|ramen|12|
+
+<h3><ins>Table 3: members</ins></h3>
+
+The last table contains the `customer_id` and `join_date` for when a customer joins Danny's Diner's loyalty program.
+|customer_id|join_date|
+|---|---|
+|A|2021-01-07|
+|B|2021-01-09|
+
+## Case Study Questions
+1. What is the total amount each customer spent at the restaurant?
+   ```sql
+        select 
+        	sales.customer_id customer, 
+            sum(menu.price) money_spent
+        from dannys_diner.sales
+        	join dannys_diner.menu on sales.product_id = menu.product_id
+        group by sales.customer_id
+        order by sales.customer_id;
+   ```
+2. How many days has each customer visited the restaurant?
+   ```sql
+        select 
+        	 customer_id customer, 
+            count(distinct order_date) day_count
+        from dannys_diner.sales
+        group by customer_id;
+3. What was the first item from the menu purchased by each customer?
+   ```sql
+       with sales_rank as (
+          select 
+            sales.customer_id, 
+            sales.order_date, 
+            menu.product_name,
+            dense_rank() over (
+              partition by sales.customer_id 
+              order by sales.order_date) as rank
+          from dannys_diner.sales
+          join dannys_diner.menu on sales.product_id = menu.product_id
+        )
+        
+        select 
+          customer_id customer, 
+          product_name product
+        from sales_rank
+        where rank = 1
+        group by customer_id, product_name;
+   ```
+4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+   ```sql
+        select
+        	menu.product_name product,
+           count(sales.product_id) count
+        from dannys_diner.sales
+        	join dannys_diner.menu on sales.product_id = menu.product_id
+        group by menu.product_name
+        limit 1;
+   ```
+5. Which item was the most popular for each customer?
+   ```sql
+        select
+        	 menu.product_name product,
+            count(sales.product_id) count
+        from dannys_diner.sales
+        	join dannys_diner.menu on sales.product_id = menu.product_id
+        group by menu.product_name
+        limit 1;
+   ```
+   Or
+   ```sql
+       with pop_menu as (
+           select 
+          	  sales.customer_id,
+          	  menu.product_name,
+          	  count(sales.product_id) as purchased,
+          	  dense_rank() over (
+                partition by sales.customer_id
+                order by count(sales.customer_id) desc) as rank
+           from dannys_diner.sales
+               join dannys_diner.menu on sales.product_id = menu.product_id
+           group by sales.customer_id, menu.product_name
+        )
+        
+        select 
+            customer_id customer,
+            product_name product,
+            purchased
+        from pop_menu 
+        	where rank = 1;
+   ```
+6. Which item was purchased first by the customer after they became a member?
+   ```sql
+   with mem_items as(
+      select
+      	  sales.customer_id,
+      	  sales.product_id,
+      	  row_number() over 
+      		  (partition by members.customer_id
+               order by sales.order_date) as date_row
+       from dannys_diner.sales
+         join dannys_diner.members on sales.customer_id = members.customer_id
+       where sales.order_date > members.join_date
+     )
+     
+     select
+     	 mem_items.customer_id customer,
+        menu.product_name product
+     from mem_items
+       join dannys_diner.menu on mem_items.product_id = menu.product_id
+     where date_row = 1
+     order by customer;
+   ```
+7. Which item was purchased just before the customer became a member?
+   ```sql
+   ```
+8. What are the total items and amount spent for each member before they became a member?
+   ```sql
+   ```
+9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+   ```sql
+   ```
+10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+   ```sql
+   ```
