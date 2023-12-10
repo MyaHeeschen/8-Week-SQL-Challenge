@@ -25,5 +25,22 @@ All of the datasets are in the dannys_diner database schema.
 <h3><ins>Table 1: sales</ins></h3>
 
 This table contains the `customer_id`, `order_date`, and `product_id` for all purchases so far.
+|customer_id|order_date|product_id|
+|---|---|---|
+|A|2021-01-01|1|
+|A|2021-01-01|2|
+|A|2021-01-07|2|
+|A|2021-01-10|3|
+|A|2021-01-11|3|
+|A|2021-01-11|3|
+|B|2021-01-01|2|
+|B|2021-01-02|2|
+|B|2021-01-04|1|
+|B|2021-01-11|1|
+|B|2021-01-16|3|
+|B|2021-02-01|3|
+|C|2021-01-01|3|
+|C|2021-01-01|3|
+|C|2021-01-07|3|
 
 ``
