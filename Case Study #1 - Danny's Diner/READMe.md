@@ -82,7 +82,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | A        | 76          |
 | B        | 74          |
 | C        | 36          |
-- From this query, we can see that customer A spent the most and customer C has spent the least.
+
+   From this query, we can see that customer A spent the most and customer C spent the least.
 <br/><br/>
 2. __How many days has each customer visited the restaurant?__
    ```sql
@@ -103,7 +104,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | A        | 4         |
 | B        | 6         |
 | C        | 2         |
-- We can see that customer B has visited the most days at 6 while customer C visited the least at 2 days.
+
+   We can see that customer B has visited the most days at 6 while customer C visited the least at 2 days.
 <br/><br/>
 3. What was the first item from the menu purchased by each customer?
    ```sql
@@ -126,6 +128,15 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         where rank = 1
         group by customer_id, product_name;
    ```
+   ### Steps
+   ### Result
+| customer | product |
+| -------- | ------- |
+| A        | curry   |
+| A        | sushi   |
+| B        | curry   |
+| C        | ramen   |
+
 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
    ```sql
         select
@@ -136,7 +147,13 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         group by menu.product_name
         limit 1;
    ```
-5. Which item was the most popular for each customer?
+   ### Steps
+   ### Result
+| product | count |
+| ------- | ----- |
+| ramen   | 8     |
+
+6. Which item was the most popular for each customer?
    ```sql
         select
         	 menu.product_name product,
@@ -146,6 +163,18 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         group by menu.product_name
         limit 1;
    ```
+   ### Steps
+   ### Result
+| customer | product | purchased |
+| -------- | ------- | --------- |
+| A        | ramen   | 3         |
+| A        | curry   | 2         |
+| A        | sushi   | 1         |
+| B        | ramen   | 2         |
+| B        | curry   | 2         |
+| B        | sushi   | 2         |
+| C        | ramen   | 3         |
+
    Or
    ```sql
        with pop_menu as (
@@ -168,7 +197,17 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         from pop_menu 
         	where rank = 1;
    ```
-6. Which item was purchased first by the customer after they became a member?
+   ### Steps
+   ### Result
+| customer | product | purchased |
+| -------- | ------- | --------- |
+| A        | ramen   | 3         |
+| B        | ramen   | 2         |
+| B        | curry   | 2         |
+| B        | sushi   | 2         |
+| C        | ramen   | 3         |
+
+8. Which item was purchased first by the customer after they became a member?
    ```sql
    with mem_items as(
       select
@@ -190,7 +229,14 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
      where date_row = 1
      order by customer;
    ```
-7. Which item was purchased just before the customer became a member?
+   ### Steps
+   ### Result
+| customer | product |
+| -------- | ------- |
+| A        | ramen   |
+| B        | sushi   |
+
+10. Which item was purchased just before the customer became a member?
    ```sql
    with prior_mem_items as(
       select
@@ -212,7 +258,14 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
      where date_row = 1
      order by customer;
    ```
-8. What are the total items and amount spent for each member before they became a member?
+   ### Steps
+   ### Result
+| customer | product |
+| -------- | ------- |
+| A        | sushi   |
+| B        | sushi   |
+
+11. What are the total items and amount spent for each member before they became a member?
    ```sql
       select
          sales.customer_id customer,
@@ -225,7 +278,14 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
       group by sales.customer_id
       order by sales.customer_id;
    ```
-9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+   ### Steps
+   ### Result
+| customer | total_items | amount_spent |
+| -------- | ----------- | ------------ |
+| A        | 2           | 25           |
+| B        | 3           | 40           |
+
+11. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
    ```sql
       select
          sales.customer_id customer,
@@ -239,7 +299,15 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
       group by sales.customer_id
       order by sales.customer_id;
    ```
-10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+   ### Steps
+   ### Result
+| customer | points |
+| -------- | ------ |
+| A        | 860    |
+| B        | 940    |
+| C        | 360    |
+
+11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
    ```sql
    with offer_dates as (
       select 
@@ -267,3 +335,93 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
       where order_date < '2021-02-01'
       group by customer;
    ```
+   ### Steps
+   ### Result
+| customer | jan_member_points |
+| -------- | ----------------- |
+| A        | 1370              |
+| B        | 820               |
+
+## Bonus Questions
+- Join All The Things
+   - Danny also wants a table that includes the `customer_id`, `order_date`, `product_name`, `price`, and whether the customer is a member. This table will help him and his team to draw general insights quickly.
+   ``` sql
+      select
+         sales.customer_id, sales.order_date,
+         menu.product_name, menu.price,
+         case
+            when sales.order_date >= members.join_date
+               then 'Y'
+            when sales.order_date < members.join_date
+               then 'N'
+            else 'N'
+            end member
+      from dannys_diner.sales
+         join dannys_diner.menu on sales.product_id = menu.product_id
+         left join dannys_diner.members on sales.customer_id = members.customer_id
+      order by sales.customer_id, sales.order_date;
+   ```
+| customer_id | order_date               | product_name | price | member |
+| ----------- | ------------------------ | ------------ | ----- | ------ |
+| A           | 2021-01-01T00:00:00.000Z | sushi        | 10    | N      |
+| A           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |
+| A           | 2021-01-07T00:00:00.000Z | curry        | 15    | Y      |
+| A           | 2021-01-10T00:00:00.000Z | ramen        | 12    | Y      |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      |
+| B           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |
+| B           | 2021-01-02T00:00:00.000Z | curry        | 15    | N      |
+| B           | 2021-01-04T00:00:00.000Z | sushi        | 10    | N      |
+| B           | 2021-01-11T00:00:00.000Z | sushi        | 10    | Y      |
+| B           | 2021-01-16T00:00:00.000Z | ramen        | 12    | Y      |
+| B           | 2021-02-01T00:00:00.000Z | ramen        | 12    | Y      |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |
+| C           | 2021-01-07T00:00:00.000Z | ramen        | 12    | N      |
+- Rank All The Things
+   - Danny also wants a table that ranks the order of products for member-only purchases.
+``` sql
+with mem_status as (
+   Select
+      sales.customer_id, sales.order_date,
+      menu.product_name, menu.price,
+      case
+         when sales.order_date >= members.join_date
+            then 'Y'
+         when sales.order_date < members.join_date
+            then 'N'
+         else 'N'
+         end member
+   from dannys_diner.sales
+      join dannys_diner.menu on sales.product_id = menu.product_id
+      left join dannys_diner.members on sales.customer_id = members.customer_id
+    )
+    
+   select *,
+      case	
+         when member = 'N'
+            then null
+         else
+            rank() over (
+               partition by customer_id, member
+               order by order_date, member)
+         end
+   from mem_status;
+```
+| customer_id | order_date               | product_name | price | member | rank |
+| ----------- | ------------------------ | ------------ | ----- | ------ | ---- |
+| A           | 2021-01-01T00:00:00.000Z | sushi        | 10    | N      |      |
+| A           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |      |
+| A           | 2021-01-07T00:00:00.000Z | curry        | 15    | Y      | 1    |
+| A           | 2021-01-10T00:00:00.000Z | ramen        | 12    | Y      | 2    |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      | 3    |
+| A           | 2021-01-11T00:00:00.000Z | ramen        | 12    | Y      | 3    |
+| B           | 2021-01-01T00:00:00.000Z | curry        | 15    | N      |      |
+| B           | 2021-01-02T00:00:00.000Z | curry        | 15    | N      |      |
+| B           | 2021-01-04T00:00:00.000Z | sushi        | 10    | N      |      |
+| B           | 2021-01-11T00:00:00.000Z | sushi        | 10    | Y      | 1    |
+| B           | 2021-01-16T00:00:00.000Z | ramen        | 12    | Y      | 2    |
+| B           | 2021-02-01T00:00:00.000Z | ramen        | 12    | Y      | 3    |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |      |
+| C           | 2021-01-01T00:00:00.000Z | ramen        | 12    | N      |      |
+| C           | 2021-01-07T00:00:00.000Z | ramen        | 12    | N      |      |
