@@ -63,7 +63,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 |B|2021-01-09|
 
 ## Case Study Questions
-1. __What is the total amount each customer spent at the restaurant?__
+<h3>1. <ins>What is the total amount each customer spent at the restaurant?</ins></h3>
+
    ```sql
         select 
             sales.customer_id customer, 
@@ -85,7 +86,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 
    From this query, we can see that customer A spent the most and customer C spent the least.
 <br/><br/>
-2. __How many days has each customer visited the restaurant?__
+<h3>2. <ins>How many days has each customer visited the restaurant?</ins></h3>
+
    ```sql
         select 
         	 customer_id customer, 
@@ -107,7 +109,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 
    We can see that customer B visited the most days at 6 while customer C visited the least at 2 days.
 <br/><br/>
-3. What was the first item from the menu purchased by each customer?
+<h3>3. <ins>What was the first item from the menu purchased by each customer?</ins></h3>
+
    ```sql
        with sales_rank as (
           select 
