@@ -5,7 +5,7 @@
 </p>
 
 <p align = center><em>
-   All information, datasets, and images came from <a href="https://8weeksqlchallenge.com/case-study-1/">Data With Danny</a></em>
+   All information, datasets, and images come from <a href="https://8weeksqlchallenge.com/case-study-1/">Data With Danny</a></em>
 </p>
 
 ## Business Objective
