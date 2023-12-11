@@ -63,23 +63,48 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 |B|2021-01-09|
 
 ## Case Study Questions
-1. What is the total amount each customer spent at the restaurant?
+1. __What is the total amount each customer spent at the restaurant?__
    ```sql
         select 
-        	sales.customer_id customer, 
+            sales.customer_id customer, 
             sum(menu.price) money_spent
         from dannys_diner.sales
         	join dannys_diner.menu on sales.product_id = menu.product_id
         group by sales.customer_id
         order by sales.customer_id;
    ```
-2. How many days has each customer visited the restaurant?
+   ### Steps
+      - For this question, we will need the price from the `menu` table, so we will use JOIN to merge the `sales` and `menu` tables on `product_id`.
+      - SUM is used to add up the price for each `customer_id` and GROUP BY will group and sum the price for each customer.
+   ### Result
+| customer | money_spent |
+| -------- | ----------- |
+| A        | 76          |
+| B        | 74          |
+| C        | 36          |
+- From this query, we can see that customer A spent the most and customer C has spent the least.
+<br/><br/>
+2. __How many days has each customer visited the restaurant?__
    ```sql
         select 
         	 customer_id customer, 
             count(distinct order_date) day_count
         from dannys_diner.sales
         group by customer_id;
+   ```
+   ### Steps
+   - We will just need the `sales` table for this question to find out how many days the customer has visited Danny's Diner.
+   - It is important to use COUNT(DISTINCT `order_date`) as the command distinct will only select unique dates.
+   - For example, customer A visited twice on '2021-01-01' and we just want the days a customer visited, not the number of times a customer ordered.
+  
+   ### Result
+| customer | day_count |
+| -------- | --------- |
+| A        | 4         |
+| B        | 6         |
+| C        | 2         |
+- We can see that customer B has visited the most days at 6 while customer C visited the least at 2 days.
+<br/><br/>
 3. What was the first item from the menu purchased by each customer?
    ```sql
        with sales_rank as (
