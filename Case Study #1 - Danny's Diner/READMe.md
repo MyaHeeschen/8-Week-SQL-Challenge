@@ -105,7 +105,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | B        | 6         |
 | C        | 2         |
 
-   We can see that customer B has visited the most days at 6 while customer C visited the least at 2 days.
+   We can see that customer B visited the most days at 6 while customer C visited the least at 2 days.
 <br/><br/>
 3. What was the first item from the menu purchased by each customer?
    ```sql
@@ -129,6 +129,10 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         group by customer_id, product_name;
    ```
 ### Steps
+- To more easily write our query, we will create a CTE (Common Table Expression) called `sales_rank` with all of the attributes we need to answer the question. DENSE_RANK is used to find the row number which is then partitioned by each `customer_id` and sorted by the `order_date` as we want to know what the customers ordered first.
+- We then write a query to select the `customer_id` and `product_name` columns from the CTE using the command `WHERE rank = 1` to find the first items that were ordered.
+- The query is then grouped by `customer_id` and `product_name`.
+
 ### Result
 | customer | product |
 | -------- | ------- |
@@ -137,6 +141,10 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | B        | curry   |
 | C        | ramen   |
 
+   - Customer A has curry and sushi as their first items as they purchased both on the same day.
+   - Customer B's first order was curry.
+   - Customer C's first order was ramen.
+<br/><br/>
 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
    ```sql
         select
@@ -148,11 +156,17 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         limit 1;
    ```
 ### Steps
+- We will JOIN the `menu` with the `sales` table as we need the `product_name`.
+- COUNT() will be used to determine how many times each item was ordered and GROUP BY will group each menu item.
+- We only want the most popular one, so we will LIMIT the query to just one result.
+
 ### Result
 | product | count |
 | ------- | ----- |
 | ramen   | 8     |
 
+   Ramen is the most popular item and was purchased 8 times.
+<br/><br/>
 5. Which item was the most popular for each customer?
    ```sql
         select
@@ -163,8 +177,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         group by menu.product_name
         limit 1;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | product | purchased |
 | -------- | ------- | --------- |
 | A        | ramen   | 3         |
@@ -197,8 +211,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         from pop_menu 
         	where rank = 1;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | product | purchased |
 | -------- | ------- | --------- |
 | A        | ramen   | 3         |
@@ -229,8 +243,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
      where date_row = 1
      order by customer;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | product |
 | -------- | ------- |
 | A        | ramen   |
@@ -258,8 +272,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
      where date_row = 1
      order by customer;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | product |
 | -------- | ------- |
 | A        | sushi   |
@@ -278,8 +292,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
       group by sales.customer_id
       order by sales.customer_id;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | total_items | amount_spent |
 | -------- | ----------- | ------------ |
 | A        | 2           | 25           |
@@ -299,8 +313,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
       group by sales.customer_id
       order by sales.customer_id;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | points |
 | -------- | ------ |
 | A        | 860    |
@@ -335,8 +349,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
       where order_date < '2021-02-01'
       group by customer;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | jan_member_points |
 | -------- | ----------------- |
 | A        | 1370              |
@@ -361,6 +375,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
          left join dannys_diner.members on sales.customer_id = members.customer_id
       order by sales.customer_id, sales.order_date;
    ```
+### Steps
+### Result
 | customer_id | order_date               | product_name | price | member |
 | ----------- | ------------------------ | ------------ | ----- | ------ |
 | A           | 2021-01-01T00:00:00.000Z | sushi        | 10    | N      |
@@ -408,6 +424,8 @@ with mem_status as (
          end
    from mem_status;
 ```
+### Steps
+### Result
 | customer_id | order_date               | product_name | price | member | rank |
 | ----------- | ------------------------ | ------------ | ----- | ------ | ---- |
 | A           | 2021-01-01T00:00:00.000Z | sushi        | 10    | N      |      |
