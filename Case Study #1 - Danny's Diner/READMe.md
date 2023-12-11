@@ -73,10 +73,10 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         group by sales.customer_id
         order by sales.customer_id;
    ```
-   ### Steps
-      - For this question, we will need the price from the `menu` table, so we will use JOIN to merge the `sales` and `menu` tables on `product_id`.
-      - SUM is used to add up the price for each `customer_id` and GROUP BY will group and sum the price for each customer.
-   ### Result
+### Steps
+   - For this question, we will need the price from the `menu` table, so we will use JOIN to merge the `sales` and `menu` tables on `product_id`.
+   - SUM is used to add up the price for each `customer_id` and GROUP BY will group and sum the price for each customer.
+### Result
 | customer | money_spent |
 | -------- | ----------- |
 | A        | 76          |
@@ -128,8 +128,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         where rank = 1
         group by customer_id, product_name;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | customer | product |
 | -------- | ------- |
 | A        | curry   |
@@ -147,13 +147,13 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         group by menu.product_name
         limit 1;
    ```
-   ### Steps
-   ### Result
+### Steps
+### Result
 | product | count |
 | ------- | ----- |
 | ramen   | 8     |
 
-6. Which item was the most popular for each customer?
+5. Which item was the most popular for each customer?
    ```sql
         select
         	 menu.product_name product,
@@ -207,7 +207,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | B        | sushi   | 2         |
 | C        | ramen   | 3         |
 
-8. Which item was purchased first by the customer after they became a member?
+6. Which item was purchased first by the customer after they became a member?
    ```sql
    with mem_items as(
       select
@@ -236,7 +236,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | A        | ramen   |
 | B        | sushi   |
 
-10. Which item was purchased just before the customer became a member?
+7. Which item was purchased just before the customer became a member?
    ```sql
    with prior_mem_items as(
       select
@@ -265,7 +265,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | A        | sushi   |
 | B        | sushi   |
 
-11. What are the total items and amount spent for each member before they became a member?
+8. What are the total items and amount spent for each member before they became a member?
    ```sql
       select
          sales.customer_id customer,
@@ -285,7 +285,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | A        | 2           | 25           |
 | B        | 3           | 40           |
 
-11. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
    ```sql
       select
          sales.customer_id customer,
@@ -307,7 +307,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | B        | 940    |
 | C        | 360    |
 
-11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
    ```sql
    with offer_dates as (
       select 
