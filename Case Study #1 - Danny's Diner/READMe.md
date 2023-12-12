@@ -148,7 +148,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
    - Customer B's first order was curry.
    - Customer C's first order was ramen.
 <br/><br/>
-4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+<h3>4. <ins>What is the most purchased item on the menu and how many times was it purchased by all customers?</ins></h3>
+
    ```sql
         select
         	menu.product_name product,
@@ -160,7 +161,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
    ```
 ### Steps
 - We will JOIN the `menu` with the `sales` table as we need the `product_name`.
-- COUNT() will be used to determine how many times each item was ordered and GROUP BY will group each menu item.
+- COUNT() will be used to determine how many times each item was ordered and GROUP BY will group the results by each menu item.
 - We only want the most popular one, so we will LIMIT the query to just one result.
 
 ### Result
@@ -170,7 +171,9 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 
    Ramen is the most popular item and was purchased 8 times.
 <br/><br/>
-5. Which item was the most popular for each customer?
+<h3>5. <ins>Which item was the most popular for each customer?</ins></h3>
+
+   For this question, I found two ways to find the most popular item for each customer. The first one is a quick query that shows the count of each item they purchased but is only really useful as the dataset is very small. The second one is most useful for all sizes of data and uses a CTE like in question 3.
    ```sql
         select
         	 menu.product_name product,
