@@ -173,29 +173,6 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 <br/><br/>
 <h3>5. <ins>Which item was the most popular for each customer?</ins></h3>
 
-   For this question, I found two ways to find the most popular item for each customer. The first one is a quick query that shows the count of each item they purchased but is only really useful as the dataset is very small. The second one is most useful for all sizes of data and uses a CTE like in question 3.
-   ```sql
-        select
-        	 menu.product_name product,
-            count(sales.product_id) count
-        from dannys_diner.sales
-        	join dannys_diner.menu on sales.product_id = menu.product_id
-        group by menu.product_name
-        limit 1;
-   ```
-### Steps
-### Result
-| customer | product | purchased |
-| -------- | ------- | --------- |
-| A        | ramen   | 3         |
-| A        | curry   | 2         |
-| A        | sushi   | 1         |
-| B        | ramen   | 2         |
-| B        | curry   | 2         |
-| B        | sushi   | 2         |
-| C        | ramen   | 3         |
-
-   Or
    ```sql
        with pop_menu as (
            select 
@@ -218,6 +195,9 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
         	where rank = 1;
    ```
 ### Steps
+- Similar to the query in question 3, we will create a CTE table, but this time we will use DENSE_RANK() to rank the COUNT() of rows, while grouping by `customer_id` and `product_name`.
+- The `sales` table is joined with the `menu` table on `product_id`.
+- The outside query will result in the customer, product, and the amount of items purchased with the rank being equal to one.
 ### Result
 | customer | product | purchased |
 | -------- | ------- | --------- |
@@ -227,7 +207,11 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | B        | sushi   | 2         |
 | C        | ramen   | 3         |
 
-6. Which item was purchased first by the customer after they became a member?
+   - Customers A and C purchased ramen the most.
+   - Customer B purchased ramen, curry, and sushi an equal amount of times.
+<br/><br/>
+<h3>6. <ins>Which item was purchased first by the customer after they became a member?</ins></h3>
+
    ```sql
    with mem_items as(
       select
@@ -256,6 +240,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
 | A        | ramen   |
 | B        | sushi   |
 
+   After becoming a member at Danny's Diner, customer A purchased ramen, and customer B purchased sushi.
+<br/><br/>
 7. Which item was purchased just before the customer became a member?
    ```sql
    with prior_mem_items as(
