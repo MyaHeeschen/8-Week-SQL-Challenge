@@ -196,7 +196,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
    ```
 ### Steps
 - Similar to the query in question 3, we will create a CTE table, but this time we will use DENSE_RANK() to rank the COUNT() of rows, while grouping by `customer_id` and `product_name`.
-- The `sales` table is joined with the `menu` table on `product_id`.
+   - The `sales` table is joined with the `menu` table on `product_id`.
 - The outside query will result in the customer, product, and the amount of items purchased with the rank being equal to one.
 ### Result
 | customer | product | purchased |
@@ -234,6 +234,8 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
      order by customer;
    ```
 ### Steps
+- Create CTE with the needed columns and use ROW_NUMBER() to rank the rows. We will PARTITION() by `customer_id` and ORDER_BY() the `order_date`. We are only looking at the items purchased after customers became members, so we will use the WHERE clause to only get results where the `order_date` > `join_date`.
+- 
 ### Result
 | customer | product |
 | -------- | ------- |
