@@ -235,7 +235,7 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
    ```
 ### Steps
 - Create CTE with the needed columns and use ROW_NUMBER() to rank the rows. We will PARTITION() by `customer_id` and ORDER_BY() the `order_date`. We are only looking at the items purchased after customers became members, so we will use the WHERE clause to only get results where the `order_date` > `join_date`.
-- 
+- We then select the product that was purchased first for each customer.
 ### Result
 | customer | product |
 | -------- | ------- |
@@ -267,12 +267,16 @@ The last table contains the `customer_id` and `join_date` for when a customer jo
      order by customer;
    ```
 ### Steps
+- We create almost the same CTE table but where `order_date` < `join_date` and ordered by a descending `order_date` as we want the date that was most recent before they became a member.
+- Then we selected the product with the row number of 1.
 ### Result
 | customer | product |
 | -------- | ------- |
 | A        | sushi   |
 | B        | sushi   |
 
+   Right before becoming a member at Danny's Diner, customers A and B both purchased sushi.
+<br/><br/>
 8. What are the total items and amount spent for each member before they became a member?
    ```sql
       select
